@@ -1,4 +1,5 @@
 require 'haml'
+require 'sass'
 require 'coderay'
 
 class Button
@@ -12,7 +13,7 @@ class Button
 end
 
 before 'index.html.haml' do
-  @buttons = %w{Buttoner BadButtoner}.map do |func_name|
+  @buttons = %w{Buttoner HidingButtoner}.map do |func_name|
     Button.new func_name
   end
 end

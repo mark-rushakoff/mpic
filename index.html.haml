@@ -6,16 +6,14 @@
       :rel => "stylesheet",
       :type => "text/css"}
     %script{:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'}
+    %script{:src => '/js/mpic.js'}
     - @buttons.each do |btn|
       %script{:src => "/#{btn.file_name}"}
     %script
       $(function() {
       - @buttons.each do |btn|
         (function(){
-        var $button = $("<button/>").addClass("adder").text("#{btn.func_name}");
-        var buttonObj = new #{btn.func_name}();
-        $button.click(function(){buttonObj.add($("##{btn.camel_name}"))});
-        $("##{btn.camel_name}").append($button);
+        initializeButton("#{btn.func_name}", "#{btn.camel_name}");
         })();
       });
 
@@ -28,3 +26,5 @@
       - @buttons.each do |btn|
         %div.section{:id => btn.camel_name}
           = find_and_preserve btn.html
+          %div.input
+          %div.output

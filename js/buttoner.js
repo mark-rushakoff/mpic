@@ -1,15 +1,13 @@
 // Base, reference implementation
 
-// Provide a constructor
-window.Buttoner = function Buttoner() {
-    this.counter = 0;
-};
-window.Buttoner.prototype = {
-    // Instance method add:
-    // When called, should append a button to the provided container
-    add: function($container) {
-        var $button = $("<button/>").text("Buttoner " + (++this.counter));
+// input: jQuery selector for where to put a new button
+// returns: Function that, when called, appends a button to the input container.
+//          When THAT button is clicked, it removes itself (properly in this case).
+function Buttoner($container) {
+    var counter = 0;
+    return function() {
+        var $button = $("<button/>").text("Buttoner " + (++counter));
         $button.click(function(){ $button.remove(); });
         $container.append($button);
-    },
+    }
 };
