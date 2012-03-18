@@ -12,6 +12,9 @@ class Button
   end
 end
 
+ignore *%w{.gitignore LICENSE Gemfile Gemfile.lock Rakefile}
+ignore(/\.swp$/, %r{/\.git/}, %r{/\.sass-cache/})
+
 before 'index.html.haml' do
   @buttons = %w{Buttoner HidingButtoner}.map do |func_name|
     Button.new func_name
