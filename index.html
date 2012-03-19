@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href='/css/mpic.css' rel='stylesheet' type='text/css' />
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script src='/js/mpic.js'></script>
+    <script src='/js/buttoner.js'></script>
+    <script src='/js/hiding_buttoner.js'></script>
+    <script>
+      $(function() {
+      (function(){
+      initializeButton("Buttoner", "buttoner");
+      })();
+      (function(){
+      initializeButton("HidingButtoner", "hiding_buttoner");
+      })();
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Memory Profiling in Chrome</h1>
+    <div id='intro'>
+      <p></p>
+    </div>
+    <div id='main'>
+      <div class='section' id='buttoner'>
+        <div class="CodeRay">
+          <div class="code"><pre><span style="color:#777">// Base, reference implementation</span>&#x000A;&#x000A;<span style="color:#777">// input: jQuery selector for where to put a new button</span>&#x000A;<span style="color:#777">// returns: Function that, when called, appends a button to the input container.</span>&#x000A;<span style="color:#777">//          When THAT button is clicked, it removes itself (properly in this case).</span>&#x000A;<span style="color:#080;font-weight:bold">function</span> <span style="color:#06B;font-weight:bold">Buttoner</span>(<span style="color:#369;font-weight:bold">$container</span>) {&#x000A;    <span style="color:#080;font-weight:bold">var</span> counter = <span style="color:#00D">0</span>;&#x000A;    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">function</span>() {&#x000A;        <span style="color:#080;font-weight:bold">var</span> <span style="color:#369;font-weight:bold">$button</span> = <span style="color:#369;font-weight:bold">$</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">&lt;button/&gt;</span><span style="color:#710">&quot;</span></span>).text(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Buttoner </span><span style="color:#710">&quot;</span></span> + (++counter));&#x000A;        <span style="color:#369;font-weight:bold">$button</span>.click(<span style="color:#080;font-weight:bold">function</span>(){ <span style="color:#369;font-weight:bold">$button</span>.remove(); });&#x000A;        <span style="color:#369;font-weight:bold">$container</span>.append(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;    }&#x000A;};</pre></div>
+        </div>
+        <div class='input'></div>
+        <div class='output'></div>
+      </div>
+      <div class='section' id='hiding_buttoner'>
+        <div class="CodeRay">
+          <div class="code"><pre><span style="color:#777">// Bad implementation: only hides the button</span>&#x000A;<span style="color:#080;font-weight:bold">function</span> <span style="color:#06B;font-weight:bold">HidingButtoner</span>(<span style="color:#369;font-weight:bold">$container</span>) {&#x000A;    <span style="color:#080;font-weight:bold">var</span> counter = <span style="color:#00D">0</span>;&#x000A;    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">function</span>() {&#x000A;        <span style="color:#080;font-weight:bold">var</span> <span style="color:#369;font-weight:bold">$button</span> = <span style="color:#369;font-weight:bold">$</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">&lt;button/&gt;</span><span style="color:#710">&quot;</span></span>).text(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">HidingButtoner </span><span style="color:#710">&quot;</span></span> + (++counter));&#x000A;        <span style="color:#369;font-weight:bold">$button</span>.click(<span style="color:#080;font-weight:bold">function</span>(){ <span style="color:#369;font-weight:bold">$button</span>.hide(); });&#x000A;        <span style="color:#369;font-weight:bold">$container</span>.append(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;    }&#x000A;};</pre></div>
+        </div>
+        <div class='input'></div>
+        <div class='output'></div>
+      </div>
+    </div>
+  </body>
+</html>
