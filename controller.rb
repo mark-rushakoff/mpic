@@ -1,6 +1,7 @@
 require 'haml'
 require 'sass'
 require 'coderay'
+require 'redcarpet'
 
 class Button
   attr_reader :file_name, :html, :func_name, :camel_name
