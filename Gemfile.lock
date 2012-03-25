@@ -2,7 +2,12 @@ GEM
   remote: http://rubygems.org/
   specs:
     coderay (1.0.5)
+    diff-lcs (1.1.3)
     directory_watcher (1.4.1)
+    grit (2.4.1)
+      diff-lcs (~> 1.1)
+      mime-types (~> 1.15)
+    mime-types (1.18)
     redcarpet (2.1.1)
     redis (2.2.2)
     sass (3.1.15)
@@ -21,6 +26,7 @@ PLATFORMS
 
 DEPENDENCIES
   coderay
+  grit
   redcarpet
   sass
   stasis
