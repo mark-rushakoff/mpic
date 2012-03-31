@@ -1,21 +1,40 @@
+#config {
+  padding: 5px;
+  .header {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+}
+
 .section {
-    border: 1px solid black;
-    margin: 10px 0;
+  border: 1px solid black;
+  margin: 10px 0;
 }
 
 .adder {
-    display: block;
-    font-size: 1.25em;
-    margin: 5px 10px;
+  display: block;
+  font-size: 1.25em;
+  margin: 5px 10px;
 }
 
 #footer {
-    color: gray;
-    font-style: italic;
-    font-size: 0.9em;
+  color: gray;
+  font-style: italic;
+  font-size: 0.9em;
 }
 
 button.parent_hover {
-    background-color: red;
-    color: white;
+  background-color: red;
+  color: white;
+}
+
+.section {
+  position: relative;
+}
+
+a.toggle {
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }

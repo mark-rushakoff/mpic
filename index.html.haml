@@ -11,9 +11,7 @@
     %script
       $(function() {
       - @buttons.each do |btn|
-        (function(){
         initializeButton("#{btn.func_name}", "#{btn.camel_name}");
-        })();
       });
 
   %body
@@ -24,9 +22,15 @@
     #directions
       =render '_directions.markdown'
 
+    #config.section
+      .header Configuration
+      %input#attach_leak{:type => 'checkbox'}
+      %label{:for => 'attach_leak'} Attach Leak objects to buttons to make leaks easier to detect.
+
     #main
       - @buttons.each do |btn|
         %div.section{:id => btn.camel_name}
+          %a.toggle{:href => 'javascript:void(0)'} Toggle source code visibility
           = find_and_preserve btn.html
           %div.input
           %div.output

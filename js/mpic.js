@@ -6,3 +6,10 @@ function initializeButton(buttonFuncName, buttonId) {
     $button.click(buttonClickFunc);
     $buttonSection.find(".input").append($button);
 }
+
+$(function initializeCodeToggling() {
+    $(".CodeRay").hide();
+    $(document).on("click", "a.toggle", function(e) {
+        $(e.target).siblings(".CodeRay").toggle(400);
+    });
+});
