@@ -9,5 +9,6 @@ function Buttoner($container) {
         var $button = $("<button/>").text("Buttoner " + (++counter));
         $button.click(function(){ $button.remove(); });
         $container.append($button);
+        onButtonAdded($button);
     }
 };

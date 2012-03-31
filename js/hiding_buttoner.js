@@ -5,6 +5,7 @@ function HidingButtoner($container) {
         var $button = $("<button/>").text("HidingButtoner " + (++counter));
         $button.click(animateToHide);
         $container.append($button);
+        onButtonAdded($button);
 
         function animateToHide() {
             $button.

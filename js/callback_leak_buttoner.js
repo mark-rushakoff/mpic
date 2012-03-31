@@ -8,5 +8,6 @@ function CallbackLeakButtoner($container) {
         // callback is never unbound, and the function retains a closure reference to the button that we remove
         $container.hover(function() { $button.toggleClass("parent_hover"); });
         $container.append($button);
+        onButtonAdded($button);
     }
 };

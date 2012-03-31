@@ -7,6 +7,12 @@ function initializeButton(buttonFuncName, buttonId) {
     $buttonSection.find(".input").append($button);
 }
 
+function onButtonAdded($button) {
+   if ($("#attach_leak").prop("checked")) {
+     $button.get(0).leak = new Leak();
+   }
+}
+
 $(function initializeCodeToggling() {
     $(".CodeRay").hide();
     $(document).on("click", "a.toggle", function(e) {
