@@ -1,0 +1,53 @@
+<h2>Directions</h2>
+
+<h3>How to use Chrome&#39;s memory profiler</h3>
+
+<p>First, open up Chrome&#39;s developer console :</p>
+
+<ul>
+<li><kbd>CTRL</kbd>-<kbd>SHIFT</kbd>-<kbd>i</kbd> on Linux or Windows</li>
+<li><kbd>&#8984;</kbd>-<kbd>&#8997;</kbd>-<kbd>i</kbd> on Mac</li>
+<li>Or just right-click on the page and choose &quot;Inspect Element&quot;</li>
+</ul>
+
+<p>Next, head over to the Profiles tab.</p>
+
+<h3>Your first heap snapshot</h3>
+
+<p>All three platforms for have subtly different interfaces to the profiling tools, so (currently) I won&#39;t be providing any screenshots -- hopefully this encourages you to actually follow along in your browser.</p>
+
+<p>Take a snapshot right now, on this page.
+On some platforms you have to click the icon that looks like an eye, and on others you have to choose a radio button that says something about &quot;Heap Profiling&quot; and then you have to click a button labeled &quot;Start&quot;.</p>
+
+<p>TODO: Elaborate on taking snapshots.</p>
+
+<h3>Benchmarking</h3>
+
+<p>To help understand benchmarks when they matter, it helps to understand what &quot;overhead&quot; there is in the benchmarks.
+The simplest thing to do first for benchmarking is take two snapshots in a row, then compare them.</p>
+
+<p>If there was no overhead, the comparison would show no differences between the two snapshots; but we see that Chrome at least creates some strings that go along with the snapshot.</p>
+
+<h3>Profiling</h3>
+
+<p>So you think you have a memory leak?
+The quickest way to check is to:</p>
+
+<ul>
+<li>Take a heap snapshot</li>
+<li>&quot;Do and Undo&quot; an operation</li>
+<li>Take another heap snapshot</li>
+</ul>
+
+<p>If the sizes of the two heap snapshots are the same, that&#39;s a good indicator that you don&#39;t have a leak, but you&#39;ll still have to compare the snapshots.</p>
+
+<h3>Try it out</h3>
+
+<p>I&#39;ve included several examples themed around adding and removing buttons from the DOM.</p>
+
+<p>The first one, &quot;Buttoner,&quot; is the only one that shouldn&#39;t cause any leaks.
+The rest still retain the hidden button in memory somehow.</p>
+
+<p>Try adding and removing buttons and figuring out why the buttons are still retained in memory.
+If you&#39;re having trouble, you can always show the source code for the button generator.
+Or for a more difficult challenge, uncheck the &quot;attach leak&quot; checkbox and search through raw HTML elements in the heap snapshot.</p>

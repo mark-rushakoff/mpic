@@ -1,38 +1,116 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Memory Profiling in Chrome</title>
     <link href='css/mpic.css' rel='stylesheet' type='text/css' />
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script src='js/leak.js'></script>
     <script src='js/mpic.js'></script>
     <script src='js/buttoner.js'></script>
     <script src='js/hiding_buttoner.js'></script>
+    <script src='js/callback_leak_buttoner.js'></script>
     <script>
       $(function() {
-      (function(){
       initializeButton("Buttoner", "buttoner");
-      })();
-      (function(){
       initializeButton("HidingButtoner", "hiding_buttoner");
-      })();
+      initializeButton("CallbackLeakButtoner", "callback_leak_buttoner");
       });
     </script>
   </head>
   <body>
+    <!-- ribbon link from https://github.com/blog/273-github-ribbons -->
+    <a href="http://github.com/mark-rushakoff/mpic"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
     <h1>Memory Profiling in Chrome</h1>
     <div id='intro'>
-      <p></p>
+      <h2>Introduction</h2>
+      
+      <p>This page has been developed as a reference for some of the ways that a memory may occur in a single page application, and is intended as a learning tool for using Chrome (or Chromium!) to track down Javascript memory leaks.</p>
+      
+      <p>There are several demonstrations of code that is supposed to add and remove buttons from the DOM.
+      They are all implemented differently; the first one doesn&#39;t completely cleans up after itself (thereby not creating a leak), and the rest leak memory.
+      It&#39;s your task to track down why the leaks are happening.</p>
+    </div>
+    <div id='directions'>
+      <h2>Directions</h2>
+      
+      <h3>How to use Chrome&#39;s memory profiler</h3>
+      
+      <p>First, open up Chrome&#39;s developer console :</p>
+      
+      <ul>
+      <li><kbd>CTRL</kbd>-<kbd>SHIFT</kbd>-<kbd>i</kbd> on Linux or Windows</li>
+      <li><kbd>&#8984;</kbd>-<kbd>&#8997;</kbd>-<kbd>i</kbd> on Mac</li>
+      <li>Or just right-click on the page and choose &quot;Inspect Element&quot;</li>
+      </ul>
+      
+      <p>Next, head over to the Profiles tab.</p>
+      
+      <h3>Your first heap snapshot</h3>
+      
+      <p>All three platforms for have subtly different interfaces to the profiling tools, so (currently) I won&#39;t be providing any screenshots -- hopefully this encourages you to actually follow along in your browser.</p>
+      
+      <p>Take a snapshot right now, on this page.
+      On some platforms you have to click the icon that looks like an eye, and on others you have to choose a radio button that says something about &quot;Heap Profiling&quot; and then you have to click a button labeled &quot;Start&quot;.</p>
+      
+      <p>TODO: Elaborate on taking snapshots.</p>
+      
+      <h3>Benchmarking</h3>
+      
+      <p>To help understand benchmarks when they matter, it helps to understand what &quot;overhead&quot; there is in the benchmarks.
+      The simplest thing to do first for benchmarking is take two snapshots in a row, then compare them.</p>
+      
+      <p>If there was no overhead, the comparison would show no differences between the two snapshots; but we see that Chrome at least creates some strings that go along with the snapshot.</p>
+      
+      <h3>Profiling</h3>
+      
+      <p>So you think you have a memory leak?
+      The quickest way to check is to:</p>
+      
+      <ul>
+      <li>Take a heap snapshot</li>
+      <li>&quot;Do and Undo&quot; an operation</li>
+      <li>Take another heap snapshot</li>
+      </ul>
+      
+      <p>If the sizes of the two heap snapshots are the same, that&#39;s a good indicator that you don&#39;t have a leak, but you&#39;ll still have to compare the snapshots.</p>
+      
+      <h3>Try it out</h3>
+      
+      <p>I&#39;ve included several examples themed around adding and removing buttons from the DOM.</p>
+      
+      <p>The first one, &quot;Buttoner,&quot; is the only one that shouldn&#39;t cause any leaks.
+      The rest still retain the hidden button in memory somehow.</p>
+      
+      <p>Try adding and removing buttons and figuring out why the buttons are still retained in memory.
+      If you&#39;re having trouble, you can always show the source code for the button generator.
+      Or for a more difficult challenge, uncheck the &quot;attach leak&quot; checkbox and search through raw HTML elements in the heap snapshot.</p>
+    </div>
+    <div class='section' id='config'>
+      <div class='header'>Configuration</div>
+      <input checked='checked' id='attach_leak' type='checkbox' />
+      <label for='attach_leak'>Attach Leak objects to buttons to make leaks easier to detect.</label>
     </div>
     <div id='main'>
       <div class='section' id='buttoner'>
+        <a class='toggle' href='javascript:void(0)'>Toggle source code visibility</a>
         <div class="CodeRay">
-          <div class="code"><pre><span style="color:#777">// Base, reference implementation</span>&#x000A;&#x000A;<span style="color:#777">// input: jQuery selector for where to put a new button</span>&#x000A;<span style="color:#777">// returns: Function that, when called, appends a button to the input container.</span>&#x000A;<span style="color:#777">//          When THAT button is clicked, it removes itself (properly in this case).</span>&#x000A;<span style="color:#080;font-weight:bold">function</span> <span style="color:#06B;font-weight:bold">Buttoner</span>(<span style="color:#369;font-weight:bold">$container</span>) {&#x000A;    <span style="color:#080;font-weight:bold">var</span> counter = <span style="color:#00D">0</span>;&#x000A;    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">function</span>() {&#x000A;        <span style="color:#080;font-weight:bold">var</span> <span style="color:#369;font-weight:bold">$button</span> = <span style="color:#369;font-weight:bold">$</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">&lt;button/&gt;</span><span style="color:#710">&quot;</span></span>).text(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Buttoner </span><span style="color:#710">&quot;</span></span> + (++counter));&#x000A;        <span style="color:#369;font-weight:bold">$button</span>.click(<span style="color:#080;font-weight:bold">function</span>(){ <span style="color:#369;font-weight:bold">$button</span>.remove(); });&#x000A;        <span style="color:#369;font-weight:bold">$container</span>.append(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;    }&#x000A;};</pre></div>
+          <div class="code"><pre><span style="color:#777">// Base, reference implementation</span>&#x000A;&#x000A;<span style="color:#777">// input: jQuery selector for where to put a new button</span>&#x000A;<span style="color:#777">// returns: Function that, when called, appends a button to the input container.</span>&#x000A;<span style="color:#777">//          When THAT button is clicked, it removes itself (properly in this case).</span>&#x000A;<span style="color:#080;font-weight:bold">function</span> <span style="color:#06B;font-weight:bold">Buttoner</span>(<span style="color:#369;font-weight:bold">$container</span>) {&#x000A;    <span style="color:#080;font-weight:bold">var</span> counter = <span style="color:#00D">0</span>;&#x000A;    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">function</span>() {&#x000A;        <span style="color:#080;font-weight:bold">var</span> <span style="color:#369;font-weight:bold">$button</span> = <span style="color:#369;font-weight:bold">$</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">&lt;button/&gt;</span><span style="color:#710">&quot;</span></span>).text(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Buttoner </span><span style="color:#710">&quot;</span></span> + (++counter));&#x000A;        <span style="color:#369;font-weight:bold">$button</span>.click(<span style="color:#080;font-weight:bold">function</span>(){ <span style="color:#369;font-weight:bold">$button</span>.remove(); });&#x000A;        <span style="color:#369;font-weight:bold">$container</span>.append(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;        onButtonAdded(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;    }&#x000A;};</pre></div>
         </div>
         <div class='input'></div>
         <div class='output'></div>
       </div>
       <div class='section' id='hiding_buttoner'>
+        <a class='toggle' href='javascript:void(0)'>Toggle source code visibility</a>
         <div class="CodeRay">
-          <div class="code"><pre><span style="color:#777">// Bad implementation: only hides the button</span>&#x000A;<span style="color:#080;font-weight:bold">function</span> <span style="color:#06B;font-weight:bold">HidingButtoner</span>(<span style="color:#369;font-weight:bold">$container</span>) {&#x000A;    <span style="color:#080;font-weight:bold">var</span> counter = <span style="color:#00D">0</span>;&#x000A;    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">function</span>() {&#x000A;        <span style="color:#080;font-weight:bold">var</span> <span style="color:#369;font-weight:bold">$button</span> = <span style="color:#369;font-weight:bold">$</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">&lt;button/&gt;</span><span style="color:#710">&quot;</span></span>).text(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">HidingButtoner </span><span style="color:#710">&quot;</span></span> + (++counter));&#x000A;        <span style="color:#369;font-weight:bold">$button</span>.click(<span style="color:#080;font-weight:bold">function</span>(){ <span style="color:#369;font-weight:bold">$button</span>.hide(); });&#x000A;        <span style="color:#369;font-weight:bold">$container</span>.append(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;    }&#x000A;};</pre></div>
+          <div class="code"><pre><span style="color:#777">// Bad implementation: only hides the button</span>&#x000A;<span style="color:#080;font-weight:bold">function</span> <span style="color:#06B;font-weight:bold">HidingButtoner</span>(<span style="color:#369;font-weight:bold">$container</span>) {&#x000A;    <span style="color:#080;font-weight:bold">var</span> counter = <span style="color:#00D">0</span>;&#x000A;    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">function</span>() {&#x000A;        <span style="color:#080;font-weight:bold">var</span> <span style="color:#369;font-weight:bold">$button</span> = <span style="color:#369;font-weight:bold">$</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">&lt;button/&gt;</span><span style="color:#710">&quot;</span></span>).text(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">HidingButtoner </span><span style="color:#710">&quot;</span></span> + (++counter));&#x000A;        <span style="color:#369;font-weight:bold">$button</span>.click(animateToHide);&#x000A;        <span style="color:#369;font-weight:bold">$container</span>.append(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;        onButtonAdded(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;&#x000A;        <span style="color:#080;font-weight:bold">function</span> <span style="color:#06B;font-weight:bold">animateToHide</span>() {&#x000A;            <span style="color:#369;font-weight:bold">$button</span>.&#x000A;                css(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">white-space</span><span style="color:#710">'</span></span>, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">nowrap</span><span style="color:#710">'</span></span>).&#x000A;                animate({ <span style="color:#606">width</span>: <span style="color:#00D">0</span> }, <span style="color:#00D">400</span>, <span style="color:#080;font-weight:bold">function</span>() { <span style="color:#369;font-weight:bold">$button</span>.hide(); });&#x000A;        }&#x000A;    }&#x000A;};</pre></div>
+        </div>
+        <div class='input'></div>
+        <div class='output'></div>
+      </div>
+      <div class='section' id='callback_leak_buttoner'>
+        <a class='toggle' href='javascript:void(0)'>Toggle source code visibility</a>
+        <div class="CodeRay">
+          <div class="code"><pre><span style="color:#777">// Bad implementation: DOM event handler retains reference</span>&#x000A;<span style="color:#080;font-weight:bold">function</span> <span style="color:#06B;font-weight:bold">CallbackLeakButtoner</span>(<span style="color:#369;font-weight:bold">$container</span>) {&#x000A;    <span style="color:#080;font-weight:bold">var</span> counter = <span style="color:#00D">0</span>;&#x000A;    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">function</span>() {&#x000A;        <span style="color:#080;font-weight:bold">var</span> <span style="color:#369;font-weight:bold">$button</span> = <span style="color:#369;font-weight:bold">$</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">&lt;button/&gt;</span><span style="color:#710">&quot;</span></span>).text(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Callback Leak Buttoner </span><span style="color:#710">&quot;</span></span> + (++counter));&#x000A;        <span style="color:#369;font-weight:bold">$button</span>.click(<span style="color:#080;font-weight:bold">function</span>(){ <span style="color:#369;font-weight:bold">$button</span>.remove(); });&#x000A;&#x000A;        <span style="color:#777">// callback is never unbound, and the function retains a closure reference to the button that we remove</span>&#x000A;        <span style="color:#369;font-weight:bold">$container</span>.hover(<span style="color:#080;font-weight:bold">function</span>() { <span style="color:#369;font-weight:bold">$button</span>.toggleClass(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">parent_hover</span><span style="color:#710">&quot;</span></span>); });&#x000A;        <span style="color:#369;font-weight:bold">$container</span>.append(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;        onButtonAdded(<span style="color:#369;font-weight:bold">$button</span>);&#x000A;    }&#x000A;};</pre></div>
         </div>
         <div class='input'></div>
         <div class='output'></div>
