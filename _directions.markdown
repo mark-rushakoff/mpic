@@ -45,5 +45,5 @@ The first one, "Buttoner," is the only one that shouldn't cause any leaks.
 The rest still retain the hidden button in memory somehow.
 
 Try adding and removing buttons and figuring out why the buttons are still retained in memory.
-If you need to make it a little easier to track down, check the box above the buttons to attach a Leak object to the created buttons.
-Or if you're having trouble, you can always show the source code for the button generator.
+If you're having trouble, you can always show the source code for the button generator.
+Or for a more difficult challenge, uncheck the "attach leak" checkbox and search through raw HTML elements in the heap snapshot.

@@ -16,6 +16,7 @@
       });
 
   %body
+    =render '_github_ribbon.html'
     %h1 Memory Profiling in Chrome
     #intro
       =render '_intro.markdown'
@@ -25,7 +26,7 @@
 
     #config.section
       .header Configuration
-      %input#attach_leak{:type => 'checkbox'}
+      %input#attach_leak{:type => 'checkbox', :checked => true}
       %label{:for => 'attach_leak'} Attach Leak objects to buttons to make leaks easier to detect.
 
     #main
