@@ -18,7 +18,7 @@ If you used your app (in a semi-realistic way) for 5 minutes and you went from 2
 However, if you find that your memory usage jumped from 2.50MB to 3.88MB, you need to figure out what's causing the leak sooner rather than later.
 You don't want to require your users to do a hard refresh of your app because it's using too much memory.
 
-### Tracking down which objects are leaks
+### Tracking down the cause of the leak
 
 #### Named constructors
 When comparing heap snapshots, you'll often have a lot of "overhead objects" (e.g. Strings, Arrays) that are usually not of interest when trying to fix memory leaks.
@@ -59,4 +59,18 @@ If the snapshot comparison indicates any difference (other than the couple of sm
 
 #### Navigating the retaining tree
 
-TODO
+Once you've selected an object in the top pane of the heap snapshot, you can use the retaining tree in the bottom pane to figure out exactly why it's still in memory.
+In other words, the retaining tree for a given object *x* shows you which other objects retain references to *x*.
+
+Navigating the retaining tree is easy, but if you don't already have a good understanding of how objects in your app should relate, it can be very difficult to extract useful information from retaining tree.
+This is when it really pays off to be patient and methodical.
+
+Each level of indentation in the retaining tree corresponds with a "level of retention".
+By expanding the retaining tree, you can see which object and which property or function are keeping another object in memory.
+
+You might see that a `FooModel` is still in memory while you're on the `BarPage`.
+Expanding the `FooModel` might show that the `FooModel` is being retained by the `FooTitleView` and the `FooDetailsView`, which are both retained by the `FooPage`, which is finally retained by the `document` object due to an event binding.
+
+But it isn't always quite that simple.
+There might be dozens of subviews that reference the `FooModel`, and they might be a varying number of levels of retention away from the real culprit (in this case the `FooPage`).
+So, most of the time, it's better to search depth-first when trying to understand a retaining tree.
