@@ -1,5 +1,8 @@
 ## Directions
 
+You'll want to make sure your version of Chrome is completely up-to-date.
+More recent versions of Chrome have a significantly better interface than some of the older versions.
+
 ### How to use Chrome's memory profiler
 
 First, open up Chrome's developer console :
